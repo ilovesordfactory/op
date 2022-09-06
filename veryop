@@ -44,7 +44,6 @@ for i,v in pairs(Mobs)do
     end
     wait(.1)
     timer = timer + 0.1
-    print("Timer is:"..timer)
     until v == nil or v:FindFirstChild("Humanoid") == nil or v:FindFirstChild("Humanoid").Health == 0
 end
 if #Mobs == 0 then
