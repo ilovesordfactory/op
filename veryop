@@ -1,0 +1,139 @@
+local InDungeon = false
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 120
+char = game.Players.LocalPlayer.Character
+hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
+while true do
+if InDungeon == true then
+local Breakable = false
+local Minimum_Time = 35
+timer = 0
+print("Timer Loaded")
+while wait(.5) do
+Mobs = {}
+for i,v in pairs(game.workspace.Mobs:GetChildren())do
+    if v.Name == "Borock" or v.Name == "Iron Slayer" or v.Name == "The Abomination" then
+        table.insert(Mobs,v)
+    end
+end
+print(#Mobs)
+timer = timer + 0.5
+print("Timer is:"..timer)
+for i,v in pairs(Mobs)do
+    repeat
+    hrp.CFrame = v:GetModelCFrame() + Vector3.new(0,1,0)
+    if char:FindFirstChildWhichIsA("Tool") then
+        char:FindFirstChildWhichIsA("Tool"):Activate()
+        if char:FindFirstChildWhichIsA("Tool"):WaitForChild("Config").Nickname.Value ~= "Whitelist" then
+            for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                if v:WaitForChild("Config").Nickname.Value == "Whitelist" then
+                    char.Humanoid:EquipTool(v)
+                end
+            end
+        end
+    else
+        for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+            if v:WaitForChild("Config").Nickname.Value == "Whitelist" then
+                char.Humanoid:EquipTool(v)
+            end
+        end
+    end
+    if v:FindFirstChild("Humanoid") then
+    if v.Humanoid.Health == 0 then
+        v:Destroy()
+    end
+    end
+    wait(.1)
+    timer = timer + 0.1
+    print("Timer is:"..timer)
+    until v == nil or v:FindFirstChild("Humanoid") == nil or v:FindFirstChild("Humanoid").Health == 0
+end
+if #Mobs == 0 then
+if timer > Minimum_Time then
+hrp.CFrame = game.workspace.MagmaDungeon.EndModule.Parts.FinalBossSpawn.CFrame
+Breakable = true
+end
+print("NoMobs")
+wait(1)
+for i,v in pairs(game.workspace.Mobs:GetChildren())do
+    if v.Name == "Borock" or v.Name == "Iron Slayer" or v.Name == "The Abomination" then
+        table.insert(Mobs,v)
+    end
+end
+wait(1)
+timer = timer + 2
+if #Mobs == 0 then
+if Breakable == true then
+print("Breaking")
+break
+end
+end
+end
+end
+
+chests = {}
+counter = 0
+for _,chest in pairs(game.Workspace:WaitForChild("MagmaDungeon"):GetDescendants()) do
+    if chest.Name == "WoodSilver" or chest.Name == "WoodGold" or chest.Name == "MagmaChest" or chest.Name == "ExtraMagmaChest" then
+        table.insert(chests,chest)
+    end
+end
+amountofChests = #chests
+for _,sword in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+    if sword:WaitForChild("Config").Rarity.Value <= 126 and sword:WaitForChild("Config").Nickname.Value ~= "Whitelist" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(sword)
+        game:GetService("ReplicatedStorage").Framework.RemoteEvent:FireServer(0,"BackpackServer","Drop",{})
+    end
+end
+wait(1)
+repeat
+    counter = counter+1
+    hrp.CFrame = chests[counter]:GetModelCFrame()
+    task.wait(1)
+until counter == amountofChests
+wait(5)
+for _,sword in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+    if sword:WaitForChild("Config").Rarity.Value <= 126 and sword:WaitForChild("Config").Nickname.Value ~= "Whitelist" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(sword)
+        game:GetService("ReplicatedStorage").Framework.RemoteEvent:FireServer(0,"BackpackServer","Drop",{})
+    end
+end
+wait(2)
+for _,podiumsword in pairs(game.Workspace:WaitForChild("MagmaDungeon").EndModule.Parts.Stands:GetDescendants()) do
+    if podiumsword:IsA("TextLabel") then
+        if podiumsword.Text == game.Players.LocalPlayer.Name then
+            hrp.CFrame = podiumsword.Parent.Parent.Parent.Pad.CFrame
+        end
+    end
+end
+wait(3)
+for _,sword in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+    if sword:WaitForChild("Config").Rarity.Value < 126 and sword:WaitForChild("Config").Nickname.Value ~= "Whitelist" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(sword)
+        game:GetService("ReplicatedStorage").Framework.RemoteEvent:FireServer(0,"BackpackServer","Drop",{})
+    end
+end
+InDungeon = false
+repeat wait() until game.workspace:FindFirstChild("MagmaDungeon") == nil
+else
+repeat
+if game.workspace.Maps:FindFirstChild("Magma Hills") then
+if game.workspace.Maps:FindFirstChild("Magma Hills"):FindFirstChild("DungeonMatchmaking") then
+for _,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+    if v:IsA("Tool") then
+        char.Humanoid:UnequipTools()
+    end
+end
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.workspace.Maps["Magma Hills"].DungeonMatchmaking.MatchmakingPad.CFrame
+end
+else
+game.ReplicatedStorage.Events.ToMap:FireServer(game.ReplicatedStorage.Data:FindFirstChild(game.Players.LocalPlayer.Name).Stats,game.workspace:FindFirstChild(tostring(game.Players.LocalPlayer.Name.."'s Base")),game.Players.LocalPlayer.Name,"Magma Hills")
+wait(2)
+end
+wait(1)
+print("Waiting For Dungeon")
+until
+game.workspace:FindFirstChild("MagmaDungeon")
+wait(10)
+InDungeon = true
+end
+end
